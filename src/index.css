@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&family=Playwrite+IE:wght@100..400&family=Share+Tech&family=Supermercado+One&display=swap');
+@import "tailwindcss";
+
+html, body, #root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  /* font-family: "Supermercado One", sans-serif; */
+  background: #f8fafc;
+  color: #0f172a;
+}
+.text-sxs {
+  font-size: .65rem !important;
+}
+.supermercado-one-regular {
+  font-family: "Supermercado One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.share-tech-regular {
+  font-family: "Share Tech", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
