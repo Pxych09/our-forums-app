@@ -15,6 +15,7 @@ export default function PostList({ posts, currentUser, profiles }) {
   const [editedCaption, setEditedCaption] = useState('')
   const [commentsByPost, setCommentsByPost] = useState({})
   const [commentInputs, setCommentInputs] = useState({})
+  const [expandedPosts, setExpandedPosts] = useState({})
 
   useEffect(() => {
     if (!posts.length) {
@@ -150,6 +151,13 @@ export default function PostList({ posts, currentUser, profiles }) {
     )
   }
 
+  function handleToggleExpand(postId) {
+    setExpandedPosts((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }))
+  }
+
   return (
     <section className="grid gap-4 sm:gap-6">
       {posts.map((post) => {
@@ -222,9 +230,22 @@ export default function PostList({ posts, currentUser, profiles }) {
           </div>
         </div>
       ) : (
-        <p className="text-slate-800 leading-7 whitespace-pre-wrap text-justify px-5">
-          {post.caption}
-        </p>
+        <div className="px-5">
+          <p className="text-slate-800 leading-7 whitespace-pre-wrap text-justify">
+            {expandedPosts[post.id] || post.caption.length <= 180
+              ? post.caption
+              : `${post.caption.slice(0, 180)}...`}
+          </p>
+
+          {post.caption.length > 180 && (
+            <button
+              onClick={() => handleToggleExpand(post.id)}
+              className="mt-2 text-sm font-medium text-sky-600 hover:underline"
+            >
+              {expandedPosts[post.id] ? 'See less' : 'See more'}
+            </button>
+          )}
+        </div>
       )}
     </div>
 
