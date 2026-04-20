@@ -178,7 +178,7 @@ export default function PostList({ posts, currentUser, profiles }) {
 
         <div className="min-w-0">
           <p className="text-sxs font-semibold text-sky-800 truncate">
-            {"@"+postProfile?.username || 'Unnamed User'}
+            {postProfile?.username ? `@${postProfile.username}` : 'Unnamed User'}
           </p>
           <p hidden className="text-xs text-slate-500 break-all">
             {post.userEmail}
