@@ -11,11 +11,16 @@ import {
 } from '../firebase/posts'
 
 export default function PostList({ posts, currentUser, profiles }) {
-  const [editingPostId, setEditingPostId] = useState(null)
-  const [editedCaption, setEditedCaption] = useState('')
-  const [commentsByPost, setCommentsByPost] = useState({})
-  const [commentInputs, setCommentInputs] = useState({})
-  const [expandedPosts, setExpandedPosts] = useState({})
+const [editingPostId, setEditingPostId] = useState(null)
+const [editedCaption, setEditedCaption] = useState('')
+const [editedTypeOfPost, setEditedTypeOfPost] = useState('Unchanged')
+const [editedCustomType, setEditedCustomType] = useState('')
+const [editedSubtopicInput, setEditedSubtopicInput] = useState('')
+const [editedSubtopics, setEditedSubtopics] = useState([])
+const [commentsByPost, setCommentsByPost] = useState({})
+const [commentInputs, setCommentInputs] = useState({})
+const [expandedPosts, setExpandedPosts] = useState({})
+const [readingSettingsByPost, setReadingSettingsByPost] = useState({})
 
   useEffect(() => {
     if (!posts.length) {
@@ -36,6 +41,29 @@ export default function PostList({ posts, currentUser, profiles }) {
       unsubscribers.forEach((unsubscribe) => unsubscribe())
     }
   }, [posts])
+
+  function getReadingSettings(postId) {
+    return (
+      readingSettingsByPost[postId] || {
+        fontFamily: 'Inter',
+        fontSize: '1rem',
+        textAlign: 'left',
+        textColor: '#1e293b',
+        backgroundColor: '#ffffff',
+        borderColor: '#e2e8f0',
+        showSettings: false,
+      }
+    )
+  }
+  function updateReadingSettings(postId, patch) {
+    setReadingSettingsByPost((prev) => ({
+      ...prev,
+      [postId]: {
+        ...getReadingSettings(postId),
+        ...patch,
+      },
+    }))
+  }
 
   function getProfile(userId) {
     return profiles.find((profile) => profile.id === userId)
@@ -68,31 +96,80 @@ export default function PostList({ posts, currentUser, profiles }) {
     }
   }
 
-  function handleEditStart(post) {
-    setEditingPostId(post.id)
-    setEditedCaption(post.caption)
+function handleEditStart(post) {
+  setEditingPostId(post.id)
+  setEditedCaption(post.caption)
+  setEditedTypeOfPost(post.typeOfPost || 'Unchanged')
+  setEditedCustomType(post.customType || '')
+  setEditedSubtopics(post.subtopics || [])
+  setEditedSubtopicInput('')
+}
+
+function handleEditCancel() {
+  setEditingPostId(null)
+  setEditedCaption('')
+  setEditedTypeOfPost('Unchanged')
+  setEditedCustomType('')
+  setEditedSubtopicInput('')
+  setEditedSubtopics([])
+}
+
+async function handleEditSave(postId) {
+  if (!editedCaption.trim()) {
+    toast.error('Caption cannot be empty.')
+    return
   }
 
-  function handleEditCancel() {
+  if (editedTypeOfPost === 'Other' && !editedCustomType.trim()) {
+    toast.error('Please specify the custom type.')
+    return
+  }
+
+  try {
+    await updatePost(postId, {
+      caption: editedCaption.trim(),
+      typeOfPost: editedTypeOfPost,
+      customType: editedTypeOfPost === 'Other' ? editedCustomType.trim() : '',
+      subtopics: editedSubtopics,
+    })
+
     setEditingPostId(null)
     setEditedCaption('')
+    setEditedTypeOfPost('Unchanged')
+    setEditedCustomType('')
+    setEditedSubtopicInput('')
+    setEditedSubtopics([])
+
+    toast.success('Post updated')
+  } catch (error) {
+    toast.error('Failed to update post.')
+  }
+}
+
+  function handleAddEditedSubtopic() {
+  const value = editedSubtopicInput.trim()
+
+  if (!value) return
+
+  if (editedSubtopics.length >= 5) {
+    toast.error('You can add up to 5 subtopics only.')
+    return
   }
 
-  async function handleEditSave(postId) {
-    if (!editedCaption.trim()) {
-      toast.error('Caption cannot be empty.')
-      return
-    }
-
-    try {
-      await updatePost(postId, editedCaption.trim())
-      setEditingPostId(null)
-      setEditedCaption('')
-      toast.success('Post updated')
-    } catch (error) {
-      toast.error('Failed to update post.')
-    }
+  if (editedSubtopics.includes(value)) {
+    toast.error('That subtopic is already added.')
+    return
   }
+
+  setEditedSubtopics((prev) => [...prev, value])
+  setEditedSubtopicInput('')
+}
+
+function handleRemoveEditedSubtopic(topicToRemove) {
+  setEditedSubtopics((prev) =>
+    prev.filter((topic) => topic !== topicToRemove)
+  )
+}
 
   async function handleLikeToggle(post) {
     const userId = currentUser?.uid
@@ -201,17 +278,252 @@ export default function PostList({ posts, currentUser, profiles }) {
         )}
       </div>
     </div>
+        
+    {/* Section */}
+    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 space-y-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Type of Post
+          </p>
+          <p className="text-sm font-medium text-slate-800 mt-1">
+            {post.typeOfPost === 'Other'
+              ? `Other: ${post.customType || 'Unspecified'}`
+              : `${post.typeOfPost || 'Unchanged'}`}
+          </p>
+        </div>
+
+        <div className="sm:text-right border-y border-stone-400 py-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Reading Settings
+          </p>
+          <p className="text-xs text-slate-500 mt-1">
+            Viewer-controlled only
+          </p>
+
+          <button
+            type="button"
+            onClick={() =>
+              updateReadingSettings(post.id, {
+                showSettings: !getReadingSettings(post.id).showSettings,
+              })
+            }
+            className="w-full mt-2 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-100 transition"
+          >
+            {getReadingSettings(post.id).showSettings ? 'Hide settings' : 'Show settings'}
+          </button>
+        </div>
+      </div>
+
+      {getReadingSettings(post.id).showSettings && (
+        <div className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">
+              Font Family
+            </label>
+            <select
+              value={getReadingSettings(post.id).fontFamily}
+              onChange={(e) =>
+                updateReadingSettings(post.id, { fontFamily: e.target.value })
+              }
+              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white outline-none focus:ring-2 focus:ring-sky-400"
+            >
+              <option value="Inter">Inter</option>
+              <option value="Poppins">Poppins</option>
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="Supermercado One, sans-serif">Supermercado One</option>
+              <option value="'Share Tech', sans-serif">Share Tech</option>
+              <option value="Playwrite NZ Guides">Playwrite NZ Guides</option>
+              <option value="Playwrite IE">Playwrite IE</option>
+              <option value="'Lobster Two', sans-serif">Lobster Two</option>
+              <option value="'Google Sans', sans-serif">Google Sans</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">
+              Font Size
+            </label>
+            <input
+              type="text"
+              value={getReadingSettings(post.id).fontSize}
+              onChange={(e) =>
+                updateReadingSettings(post.id, { fontSize: e.target.value })
+              }
+              placeholder="1rem"
+              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-sky-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">
+              Text Align
+            </label>
+            <select
+              value={getReadingSettings(post.id).textAlign}
+              onChange={(e) =>
+                updateReadingSettings(post.id, { textAlign: e.target.value })
+              }
+              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white outline-none focus:ring-2 focus:ring-sky-400"
+            >
+              <option value="left">Left</option>
+              <option value="center">Center</option>
+              <option value="right">Right</option>
+              <option value="justify">Justify</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">
+              Text Color
+            </label>
+            <input
+              type="color"
+              value={getReadingSettings(post.id).textColor}
+              onChange={(e) =>
+                updateReadingSettings(post.id, { textColor: e.target.value })
+              }
+              className="w-full h-10 rounded-xl border border-slate-300 bg-white px-1 py-1"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">
+              Background Color
+            </label>
+            <input
+              type="color"
+              value={getReadingSettings(post.id).backgroundColor}
+              onChange={(e) =>
+                updateReadingSettings(post.id, { backgroundColor: e.target.value })
+              }
+              className="w-full h-10 rounded-xl border border-slate-300 bg-white px-1 py-1"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">
+              Border Color
+            </label>
+            <input
+              type="color"
+              value={getReadingSettings(post.id).borderColor}
+              onChange={(e) =>
+                updateReadingSettings(post.id, { borderColor: e.target.value })
+              }
+              className="w-full h-10 rounded-xl border border-slate-300 bg-white px-1 py-1"
+            />
+          </div>
+        </div>
+      )}
+
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">
+          Subtopics
+        </p>
+
+        {post.subtopics?.length ? (
+          <div className="flex flex-wrap gap-2">
+            {post.subtopics.map((topic) => (
+            <span
+              key={topic}
+              className="px-3 py-1 rounded-full text-sm font-medium text-slate-800 
+                        bg-linear-to-r from-stone-200 via-zinc-200 to-neutral-300 
+                        border border-dashed border-stone-400 
+                        hover:bg-linear-to-r hover:from-stone-300 hover:to-neutral-400 
+                        transition"
+            >
+              {topic}
+            </span>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-slate-500">No subtopics</p>
+        )}
+      </div>
+    </div>
 
     {/* Body */}
     <div className="border-t border-slate-100 pt-4">
       {editingPostId === post.id ? (
-        <div className="space-y-3">
-          <textarea
-            value={editedCaption}
-            onChange={(e) => setEditedCaption(e.target.value)}
-            rows="4"
-            className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-sky-400"
-          />
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Type of post</label>
+            <select
+              value={editedTypeOfPost}
+              onChange={(e) => setEditedTypeOfPost(e.target.value)}
+              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-sky-400"
+            >
+              <option value="Unchanged">Unchanged</option>
+              <option value="Short Story">Short Story</option>
+              <option value="Poem">Poem</option>
+              <option value="Insight">Insight</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          {editedTypeOfPost === 'Other' && (
+            <div>
+              <label className="block text-sm font-medium mb-2">Specify type</label>
+              <input
+                type="text"
+                value={editedCustomType}
+                onChange={(e) => setEditedCustomType(e.target.value)}
+                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-sky-400"
+                placeholder="Enter custom type"
+              />
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Subtopics</label>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={editedSubtopicInput}
+                onChange={(e) => setEditedSubtopicInput(e.target.value)}
+                className="flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-sky-400"
+                placeholder="Add a subtopic"
+              />
+              <button
+                type="button"
+                onClick={handleAddEditedSubtopic}
+                className="px-4 py-3 rounded-2xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition"
+              >
+                Add
+              </button>
+            </div>
+
+            <p className="mt-2 text-xs text-slate-500">
+              Up to 5 subtopics
+            </p>
+
+            {editedSubtopics.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {editedSubtopics.map((topic) => (
+                  <button
+                    key={topic}
+                    type="button"
+                    onClick={() => handleRemoveEditedSubtopic(topic)}
+                    className="px-3 py-1 rounded-full bg-sky-50 text-sky-700 text-sm border border-sky-200 hover:bg-sky-100 transition"
+                  >
+                    {topic} ×
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Caption</label>
+            <textarea
+              value={editedCaption}
+              onChange={(e) => setEditedCaption(e.target.value)}
+              rows="4"
+              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-sky-400"
+            />
+          </div>
 
           <div className="flex flex-wrap gap-2">
             <button
@@ -230,8 +542,18 @@ export default function PostList({ posts, currentUser, profiles }) {
           </div>
         </div>
       ) : (
-        <div className="px-5">
-          <p className="text-slate-800 leading-7 whitespace-pre-wrap text-justify">
+        <div
+          className="px-5 py-4 rounded-2xl"
+          style={{
+            fontFamily: getReadingSettings(post.id).fontFamily,
+            fontSize: getReadingSettings(post.id).fontSize,
+            textAlign: getReadingSettings(post.id).textAlign,
+            color: getReadingSettings(post.id).textColor,
+            backgroundColor: getReadingSettings(post.id).backgroundColor,
+            border: `1px solid ${getReadingSettings(post.id).borderColor}`,
+          }}
+        >
+          <p className="leading-7 whitespace-pre-wrap">
             {expandedPosts[post.id] || post.caption.length <= 180
               ? post.caption
               : `${post.caption.slice(0, 180)}...`}
