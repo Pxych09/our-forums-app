@@ -15,15 +15,18 @@ import { db } from './config'
 
 const postsCollection = collection(db, 'posts')
 
-export async function createPost({ caption, user }) {
+export async function createPost({ caption, user, typeOfPost = 'Unchanged', customType = '', subtopics = [] }) {
   await addDoc(postsCollection, {
-        caption,
-        userId: user.uid,
-        userEmail: user.email,
-        createdAt: serverTimestamp(),
-        updatedAt: null,
-        likes: [],
-    })
+    caption,
+    typeOfPost,
+    customType,
+    subtopics,
+    userId: user.uid,
+    userEmail: user.email,
+    createdAt: serverTimestamp(),
+    updatedAt: null,
+    likes: [],
+  })
 }
 
 export function subscribeToPosts(callback) {
@@ -38,11 +41,11 @@ export function subscribeToPosts(callback) {
   })
 }
 
-export async function updatePost(postId, caption) {
+export async function updatePost(postId, postData) {
   const postRef = doc(db, 'posts', postId)
 
   await updateDoc(postRef, {
-    caption,
+    ...postData,
     updatedAt: serverTimestamp(),
   })
 }
