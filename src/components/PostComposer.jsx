@@ -71,13 +71,12 @@ function handleRemoveSubtopic(topicToRemove) {
 
           <div className="grid gap-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Type of post</label>
             <select
               value={typeOfPost}
               onChange={(e) => setTypeOfPost(e.target.value)}
               className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-sky-400 bg-white"
             >
-              <option value="Unchanged">Unchanged</option>
+              <option value="Unchanged">Type of Post</option>
               <option value="Short Story">Short Story</option>
               <option value="Poem">Poem</option>
               <option value="Insight">Insight</option>
@@ -87,7 +86,6 @@ function handleRemoveSubtopic(topicToRemove) {
 
           {typeOfPost === 'Other' && (
             <div>
-              <label className="block text-sm font-medium mb-2">Specify type</label>
               <input
                 type="text"
                 value={customType}
@@ -99,7 +97,6 @@ function handleRemoveSubtopic(topicToRemove) {
           )}
 
           <div>
-            <label className="block text-sm font-medium mb-2">Subtopics</label>
 
             <div className="flex gap-2">
               <input
@@ -118,10 +115,6 @@ function handleRemoveSubtopic(topicToRemove) {
               </button>
             </div>
 
-            <p className="mt-2 text-xs text-slate-500">
-              Up to 5 subtopics
-            </p>
-
             {subtopics.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-2">
                 {subtopics.map((topic) => (
@@ -131,14 +124,14 @@ function handleRemoveSubtopic(topicToRemove) {
                     onClick={() => handleRemoveSubtopic(topic)}
                     className="px-3 py-1 rounded-full bg-sky-50 text-sky-700 text-sm border border-sky-200 hover:bg-sky-100 transition"
                   >
-                    {topic} ×
+                    {topic} 
                   </button>
                 ))}
               </div>
             )}
           </div>
         </div>
-        <hr /><br />
+        <br />
           <textarea
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
