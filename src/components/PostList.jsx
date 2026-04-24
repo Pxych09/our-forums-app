@@ -281,25 +281,11 @@ function handleRemoveEditedSubtopic(topicToRemove) {
         
     {/* Section */}
     <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 space-y-4">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Type of Post
-          </p>
-          <p className="text-sm font-medium text-slate-800 mt-1">
-            {post.typeOfPost === 'Other'
-              ? `Other: ${post.customType || 'Unspecified'}`
-              : `${post.typeOfPost || 'Unchanged'}`}
-          </p>
-        </div>
-
-        <div className="sm:text-right border-y border-stone-400 py-2">
+          <div className="sm:text-right border-b border-stone-400 py-2">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
             Reading Settings
           </p>
-          <p className="text-xs text-slate-500 mt-1">
-            Viewer-controlled only
-          </p>
+          
 
           <button
             type="button"
@@ -313,10 +299,10 @@ function handleRemoveEditedSubtopic(topicToRemove) {
             {getReadingSettings(post.id).showSettings ? 'Hide settings' : 'Show settings'}
           </button>
         </div>
-      </div>
 
       {getReadingSettings(post.id).showSettings && (
         <div className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-3">
+          <code className='text-mxs'><span className='text-amber-700'>Note: </span>Viewer-controlled only.</code>
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">
               Font Family
@@ -417,6 +403,19 @@ function handleRemoveEditedSubtopic(topicToRemove) {
         </div>
       )}
 
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Type of Post
+          </p>
+          <p className="text-mxs font-medium text-emerald-600 mt-1">
+            {post.typeOfPost === 'Other'
+              ? `Other: ${post.customType || 'Unspecified'}`
+              : `${post.typeOfPost || 'Unchanged'}`}
+          </p>
+        </div>
+      </div>
+
       <div>
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">
           Subtopics
@@ -427,7 +426,7 @@ function handleRemoveEditedSubtopic(topicToRemove) {
             {post.subtopics.map((topic) => (
             <span
               key={topic}
-              className="px-3 py-1 rounded-full text-sm font-medium text-slate-800 
+              className="text-sxs px-3 py-1 rounded-full text-sm font-medium text-slate-800 
                         bg-linear-to-r from-stone-200 via-zinc-200 to-neutral-300 
                         border border-dashed border-stone-400 
                         hover:bg-linear-to-r hover:from-stone-300 hover:to-neutral-400 
@@ -642,12 +641,13 @@ function handleRemoveEditedSubtopic(topicToRemove) {
               className="rounded-2xl bg-slate-50 border border-slate-200 px-4 py-3"
             >
               <div className="flex items-start gap-3">
-                <div className="flex items-center min-w-0 flex-col border border-slate-400 rounded-2xl p-2">
+                <div className="flex items-center min-w-0 flex-col border border-cyan-700 rounded-full p-1">
                   {commentProfile?.avatarUrl ? (
                     <img
+                      title={commentProfile?.username?.toUpperCase() || 'U'}
                       src={commentProfile.avatarUrl}
                       alt="Comment avatar"
-                      className="w-9 h-9 rounded-full object-cover border border-slate-200 shrink-0"
+                      className="w-5 h-5 rounded-full object-cover border border-slate-200 shrink-0"
                     />
                   ) : (
                     <div className="w-9 h-9 rounded-full bg-slate-400 flex items-center justify-center text-xs font-medium text-white shrink-0">
@@ -655,7 +655,7 @@ function handleRemoveEditedSubtopic(topicToRemove) {
                     </div>
                   )}
 
-                  <div className="min-w-0">
+                  <div className="min-w-0" hidden>
                     <p className="text-sm font-medium text-slate-800 truncate">
                       {commentProfile?.username || 'Unnamed User'}
                     </p>
@@ -666,12 +666,12 @@ function handleRemoveEditedSubtopic(topicToRemove) {
                 </div>
 
                 <div className="flex-1">
-                    <p className="text-slate-800 whitespace-pre-wrap">
+                    <p className="text-slate-800 whitespace-pre-wrap text-mxs ">
                         {comment.text}
                     </p>
 
                     <p className="text-xs text-slate-400 shrink-0">
-                        {formatDate(comment.createdAt)}
+                        <span className='text-cyan-600 font-bold text-sxs'>@{commentProfile?.username || 'Unnamed User'}</span><span className='text-sxs'> | {formatDate(comment.createdAt)}</span>
                     </p>
                 </div>
                 
@@ -681,9 +681,9 @@ function handleRemoveEditedSubtopic(topicToRemove) {
                 <div className="mt-3 flex justify-end">
                   <button
                     onClick={() => handleCommentDelete(post.id, comment.id)}
-                    className="text-sm text-rose-600 hover:underline"
+                    className="text-mxs text-rose-600 hover:underline"
                   >
-                    Delete
+                    Remove This Comment
                   </button>
                 </div>
               )}
