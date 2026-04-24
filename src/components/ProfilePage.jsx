@@ -4,6 +4,8 @@ import { getProfile, saveProfile } from '../firebase/profiles'
 const avatarOptions = [
   'https://cdn-icons-png.flaticon.com/512/1752/1752867.png',
   'https://cdn-icons-png.flaticon.com/512/1752/1752753.png',
+  'https://cdn-icons-png.flaticon.com/512/1752/1752681.png',
+  'https://cdn-icons-png.flaticon.com/512/1752/1752885.png',
   'https://cdn-icons-png.flaticon.com/512/1752/1752678.png',
   'https://cdn-icons-png.flaticon.com/512/1752/1752702.png',
   'https://cdn-icons-png.flaticon.com/512/189/189001.png',
@@ -12,6 +14,34 @@ const avatarOptions = [
   'https://cdn-icons-png.flaticon.com/512/189/189003.png',
   'https://cdn-icons-png.flaticon.com/512/188/188991.png',
   'https://cdn-icons-png.flaticon.com/512/188/188999.png',
+  'https://cdn-icons-png.flaticon.com/512/2534/2534513.png',
+  'https://cdn-icons-png.flaticon.com/512/5169/5169366.png',
+  'https://cdn-icons-png.flaticon.com/512/15564/15564378.png',
+  'https://cdn-icons-png.flaticon.com/512/8493/8493675.png',
+  'https://cdn-icons-png.flaticon.com/512/6530/6530869.png',
+  'https://cdn-icons-png.flaticon.com/512/16115/16115848.png',
+  'https://cdn-icons-png.flaticon.com/512/18641/18641409.png',
+  'https://cdn-icons-png.flaticon.com/512/892/892736.png',
+  'https://cdn-icons-png.flaticon.com/512/892/892778.png',
+  'https://cdn-icons-png.flaticon.com/512/809/809154.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583465.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583478.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583479.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583481.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583482.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583483.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583470.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583471.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583472.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583473.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583474.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583475.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583476.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583477.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583469.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583468.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583467.png',
+  'https://cdn-icons-png.flaticon.com/512/6583/6583466.png',
 ]
 
 export default function ProfilePage({ user }) {
@@ -89,7 +119,7 @@ export default function ProfilePage({ user }) {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-sky-400"
-            placeholder="Enter your username"
+            placeholder="Set your username here!"
           />
         </div>
 
