@@ -22,11 +22,11 @@ export default function AuthForm() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-4">
+    <div className="min-h-screen bg-slate-950 text-white px-4 pt-5">
       <div className="w-full max-w-md rounded-3xl bg-white/10 backdrop-blur p-6 shadow-xl border border-white/10">
-        <h1 className="text-2xl font-bold text-center">Gallery Login</h1>
+        <h1 className="text-2xl font-bold text-center">Login to Forums</h1>
         <p className="text-sm text-slate-300 text-center mt-2">
-          Sign in to continue
+          Sign in to continue (for limited users only)
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
