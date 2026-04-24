@@ -27,7 +27,22 @@ export default function AboutPage() {
           <li>Firestore (Realtime Database)</li>
           <li>Tailwind CSS</li>
         </ul>
-        
+                
+        <div className="bg-slate-50 p-2">
+        <h5 className="text-black font-bold">Sources:</h5>
+        <p>
+          <strong>a.</strong> Flaticon: <a href="https://www.flaticon.com/" className="text-blue-600">https://www.flaticon.com</a>
+          
+        </p>
+        <p>
+          <strong>b.</strong> Netlify: <a href="https://www.netlify.com/" title="Deploy your project here for free..." className="text-blue-600">https://www.netlify.com</a>
+        </p>
+        <p>
+          <strong>c.</strong> Github: <a href="https://github.com/" className="text-blue-600">https://github.com</a>
+        </p>
+        </div>
+
+
         <h5 className="text-black font-bold">Updates:</h5>
         <p>
             This page is still under development, with more features and improvements coming soon.
