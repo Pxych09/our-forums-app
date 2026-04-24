@@ -109,9 +109,9 @@ function handleRemoveSubtopic(topicToRemove) {
               <button
                 type="button"
                 onClick={handleAddSubtopic}
-                className="px-4 py-3 rounded-2xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition"
+                className="px-4 text-xl flex justify-center items-center rounded-2xl bg-emerald-200 text-slate-700 font-medium hover:bg-emerald-400 transition"
               >
-                Add
+                +
               </button>
             </div>
 
@@ -148,7 +148,7 @@ function handleRemoveSubtopic(topicToRemove) {
         <button
         type="submit"
         disabled={loading || !caption.trim()}
-          className="rounded-2xl bg-slate-900 text-white px-5 py-3 font-medium hover:bg-slate-800 transition"
+          className="rounded-2xl bg-sky-600 text-white px-5 py-3 font-medium hover:bg-slate-800 transition"
         >
           {loading ? 'Posting...' : 'Post now'}
         </button>
