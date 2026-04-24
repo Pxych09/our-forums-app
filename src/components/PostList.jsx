@@ -495,10 +495,6 @@ function handleRemoveEditedSubtopic(topicToRemove) {
               </button>
             </div>
 
-            <p className="mt-2 text-xs text-slate-500">
-              Up to 5 subtopics
-            </p>
-
             {editedSubtopics.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-2">
                 {editedSubtopics.map((topic) => (
