@@ -14,6 +14,8 @@ body {
 }
 .text-sxs {
   font-size: .65rem !important;
+}.text-mxs {
+  font-size: .75rem !important;
 }
 .supermercado-one-regular {
   font-family: "Supermercado One", sans-serif;
